@@ -38,3 +38,8 @@ auditConfig:
 
 patchedDependencies:
   http-cache-semantics@4.2.0: patches/http-cache-semantics@4.2.0.patch
+
+# Patched versions of vulnerable transitive dependencies (pnpm audit).
+overrides:
+  'sharp@<0.35.5': '^0.35.5'
+  'source-map-js@<1.2.2': '^1.2.2'
