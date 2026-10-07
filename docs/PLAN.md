@@ -682,7 +682,8 @@ producción con el release, y la base de producción tiene backups propios.
       al mediodía se fusiona, con tag, GitHub Release, backport automático a `dev` y deploy; si no hay
       cambios, se cierran solos. Los workflows son los reutilizables de
       [`inzumer-ci`](https://github.com/inzumer/inzumer-ci) (`@v1`), compartidos con los demás repos.
-      Dependabot abre PRs los días 1 y 15. Ver
+      Las dependencias se actualizan a mano (sin Dependabot, desde el 07/10) y el CI falla ante
+      cualquier vulnerabilidad. Ver
       [08](./suggestions/08-calidad-y-tests.md#releases-automáticos).
 - [x] **Sitio de documentación**: [`inzumer/milimon-docs`](https://github.com/inzumer/milimon-docs),
       publicado en https://inzumer.github.io/milimon-docs/ (Starlight): arquitectura, 9 flujos con
