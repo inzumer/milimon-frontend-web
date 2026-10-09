@@ -1,0 +1,51 @@
+---
+import Markdoc, { type RenderableTreeNode } from '@markdoc/markdoc';
+import MarkdocHeading from '@components/atoms/MarkdocHeading/markdoc-heading.astro';
+import MarkdocLink from '@components/atoms/MarkdocLink/markdoc-link.astro';
+import MarkdocParagraph from '@components/atoms/MarkdocParagraph/markdoc-paragraph.astro';
+import MarkdocMilicitos from '@components/molecules/MarkdocMilicitos/markdoc-milicitos.astro';
+
+interface Props {
+  node: RenderableTreeNode;
+}
+
+/**
+ * A Markdoc tree (from `markdocTree`) drawn with the same components as the built articles, for
+ * the online CMS preview. Other tags are plain HTML elements.
+ */
+const { node } = Astro.props;
+const COMPONENTS = {
+  Heading: MarkdocHeading,
+  Link: MarkdocLink,
+  Paragraph: MarkdocParagraph,
+  Milicitos: MarkdocMilicitos,
+};
+const tag = Markdoc.Tag.isTag(node) ? node : null;
+const Component =
+  tag && tag.name in COMPONENTS ? COMPONENTS[tag.name as keyof typeof COMPONENTS] : null;
+const Element = tag && !Component && tag.name !== 'article' ? tag.name : null;
+// Each site component reads its own attributes (level, href, rating…) from the Markdoc tag.
+const props = (tag?.attributes ?? {}) as { level: 2 | 3; href: string; rating: number };
+---
+
+{Array.isArray(node) ? (
+  node.map((child) => <Astro.self node={child} />)
+) : !tag ? (
+  node === null || node === undefined || typeof node === 'boolean' ? null : (
+    String(node)
+  )
+) : Component ? (
+  <Component {...props}>
+    {tag.children.map((child) => (
+      <Astro.self node={child} />
+    ))}
+  </Component>
+) : Element ? (
+  <Element {...tag.attributes}>
+    {tag.children.map((child) => (
+      <Astro.self node={child} />
+    ))}
+  </Element>
+) : (
+  tag.children.map((child) => <Astro.self node={child} />)
+)}

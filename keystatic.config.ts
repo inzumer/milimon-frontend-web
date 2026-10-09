@@ -6,7 +6,7 @@ import recipeText from './src/i18n/recipe-page/es.json';
 
 /** Tells where a saved entry shows up. */
 const publishHint = (example: string) =>
-  `Se completa sola; ej.: ${example}. Al guardar, en unos 5 minutos se ve en el sitio de prueba: botón «Preview» de arriba.`;
+  `Se completa sola; ej.: ${example}. Al guardar, la vista previa de la derecha se actualiza en segundos; en el sitio de prueba se ve en unos 5 minutos (botón «Preview»).`;
 
 /** English is optional and falls back to Spanish on the site. */
 const localized = (label: string, { multiline = false, required = true } = {}) =>

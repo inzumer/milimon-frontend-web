@@ -1,8 +1,9 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { CMS_ONLINE } from '@constants/cms';
 import { publishedRecipes, type Locale } from '@utils';
 
 /** Staging (CMS online) also shows drafts, so what the CMS saves can be reviewed there. */
-const SHOW_DRAFTS = import.meta.env.PUBLIC_KEYSTATIC_STORAGE === 'github';
+const SHOW_DRAFTS = CMS_ONLINE;
 
 /** Published recipes (no drafts outside staging), featured first. */
 export const getPublishedRecipes = async (): Promise<CollectionEntry<'recipes'>[]> =>

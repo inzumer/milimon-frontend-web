@@ -16,4 +16,4 @@ jobs:
   security:
     uses: inzumer/inzumer-ci/.github/workflows/security.yml@v1
     with:
-      audit-level: moderate
+      audit-level: low

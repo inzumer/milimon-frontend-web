@@ -29,8 +29,17 @@ supportedArchitectures:
     - current
     - wasm32
 
-# Advisories without a patched release yet (reviewed 2026-10-03); drop each one once a fix ships.
+# Advisories fixed by a local patch (no upstream release yet); `pnpm audit` can't see patches.
+# Drop the patch and the entry once a fixed version ships.
 auditConfig:
   ignoreGhsas:
-    # http-cache-semantics (via astro): only Astro's build-time image cache; we have no shared cache.
+    # http-cache-semantics (via astro): max-stale no longer serves responses zeroed for security.
     - GHSA-ch52-4w7c-c8xp
+
+patchedDependencies:
+  http-cache-semantics@4.2.0: patches/http-cache-semantics@4.2.0.patch
+
+# Patched versions of vulnerable transitive dependencies (pnpm audit).
+overrides:
+  'sharp@<0.35.5': '^0.35.5'
+  'source-map-js@<1.2.2': '^1.2.2'

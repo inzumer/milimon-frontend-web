@@ -1,12 +1,11 @@
 ---
-import { getImage } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
 import { Showcase } from '@inzumer/ui-library';
 import { getTranslations } from '@i18n';
+import { imageSrc, type RecipeEntry } from '@services/content';
 import { recipeCardText, trackingId, type Locale } from '@utils';
 
 interface Props {
-  recipe: CollectionEntry<'recipes'>;
+  recipe: RecipeEntry;
   lang: Locale;
   href?: string;
 }
@@ -14,13 +13,11 @@ interface Props {
 /** The recipe's cover: photo card with title, category and time. */
 const { recipe, lang, href } = Astro.props;
 const card = recipeCardText(recipe.data, lang, getTranslations(lang, 'recipe-page'));
-const photo = recipe.data.photo
-  ? await getImage({ src: recipe.data.photo, width: 640, format: 'webp' })
-  : null;
+const photo = recipe.data.photo ? await imageSrc(recipe.data.photo, 640) : null;
 ---
 
 <Showcase
-  {...(photo && { src: photo.src })}
+  {...(photo && { src: photo })}
   {...(href && { href, linkId: trackingId('recipes', 'link', recipe.id) })}
   alt={card.alt}
   title={card.title}

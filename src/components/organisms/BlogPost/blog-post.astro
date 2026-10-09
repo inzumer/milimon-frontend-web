@@ -1,20 +1,26 @@
 ---
-import { Image } from 'astro:assets';
-import { getEntry, render, type CollectionEntry } from 'astro:content';
+import type { RenderableTreeNode } from '@markdoc/markdoc';
+import { getEntry, render } from 'astro:content';
+import ContentImage from '@components/atoms/ContentImage/content-image.astro';
 import BlogHeader from '@components/molecules/BlogHeader/blog-header.astro';
+import MarkdocTree from '@components/molecules/MarkdocTree/markdoc-tree.astro';
+import type { BlogEntry } from '@services/content';
 import { localize, type Locale } from '@utils';
 
 interface Props {
-  post: CollectionEntry<'blog'>;
+  post: BlogEntry;
   lang: Locale;
+  /** The text as a Markdoc tree (online CMS preview); otherwise it comes from the build. */
+  body?: RenderableTreeNode;
 }
 
 /** A CMS blog article: header, optional cover and the rich text of `lang` (Spanish fallback). */
-const { post, lang } = Astro.props;
+const { post, lang, body: tree } = Astro.props;
 const { data } = post;
-const body =
-  (await getEntry('blogContent', `${post.id}/content/${lang}`)) ??
-  (await getEntry('blogContent', `${post.id}/content/es`));
+const body = tree
+  ? null
+  : ((await getEntry('blogContent', `${post.id}/content/${lang}`)) ??
+    (await getEntry('blogContent', `${post.id}/content/es`)));
 const { Content } = body ? await render(body) : { Content: null };
 ---
 
@@ -26,7 +32,7 @@ const { Content } = body ? await render(body) : { Content: null };
     date={data.date}
   />
   {data.cover && (
-    <Image
+    <ContentImage
       src={data.cover}
       alt={localize(data.coverAlt, lang)}
       width={1200}
@@ -34,6 +40,6 @@ const { Content } = body ? await render(body) : { Content: null };
     />
   )}
   <div class="flex flex-col gap-4 [&_img]:rounded-2xl [&_li]:ms-5 [&_ol]:list-decimal [&_ul]:list-disc">
-    {Content && <Content />}
+    {tree ? <MarkdocTree node={tree} /> : Content && <Content />}
   </div>
 </article>

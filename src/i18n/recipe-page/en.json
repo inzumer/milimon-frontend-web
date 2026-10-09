@@ -15,7 +15,8 @@
     "page": "Page",
     "draft": "Draft: not published yet",
     "pick": "Open a recipe or an article in the panel to see how it looks.",
-    "saved": "Updates when you save."
+    "saved": "Updates a few seconds after saving.",
+    "signed-out": "Sign in with GitHub in the editor (left pane) to see the preview."
   },
   "index": {
     "title": "Recipes",

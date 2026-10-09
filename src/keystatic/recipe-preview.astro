@@ -3,16 +3,26 @@ import { getEntry } from 'astro:content';
 import { RichText } from '@inzumer/ui-library';
 import RecipeCard from '@components/molecules/RecipeCard/recipe-card.astro';
 import RecipeArticle from '@components/organisms/RecipeArticle/recipe-article.astro';
+import { CMS_ONLINE, CMS_TOKEN_COOKIE } from '@constants/cms';
 import { getTranslations } from '@i18n';
+import { loadDraftRecipe, withEditorToken } from '@services/cms-preview';
+import type { RecipeEntry } from '@services/content';
 import { toLocale } from '@utils';
 import PreviewLayout from './preview-layout.astro';
 
 const lang = toLocale(Astro.url.searchParams.get('lang') ?? 'es');
-const recipe = await getEntry('recipes', Astro.params.slug ?? '');
+const slug = Astro.params.slug ?? '';
 const text = getTranslations(lang, 'recipe-page').preview;
+// Online (staging) the draft comes from the CMS branch on GitHub; locally, from the files.
+const { value: recipe, signedOut }: { value: RecipeEntry | null | undefined; signedOut: boolean } =
+  CMS_ONLINE
+    ? await withEditorToken(Astro.cookies.get(CMS_TOKEN_COOKIE)?.value, (token) =>
+        loadDraftRecipe(slug, token),
+      )
+    : { value: await getEntry('recipes', slug), signedOut: false };
 ---
 
-<PreviewLayout collection="recipes" entry={recipe}>
+<PreviewLayout collection="recipes" entry={recipe ?? undefined} signedOut={signedOut}>
   {recipe && (
     <main class="flex flex-col gap-8">
       <section class="flex flex-col gap-2">

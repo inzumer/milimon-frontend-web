@@ -45,7 +45,7 @@ const privateRoute = hasRecipes
   ? /\/(account|history|login|admin)$/
   : /\/(account|history|login|recipes|admin)$/;
 
-/** Dev-only editor with a live preview next to Keystatic (/keystatic-editor). */
+/** Editor with a live preview next to Keystatic (/keystatic-editor): local files in dev, the CMS branch on staging. */
 const keystaticPreview = () => ({
   name: 'keystatic-preview',
   hooks: {
@@ -56,7 +56,11 @@ const keystaticPreview = () => ({
       route('/keystatic-editor', './src/keystatic/editor.astro');
       route('/keystatic-preview/recipes/[slug]', './src/keystatic/recipe-preview.astro');
       route('/keystatic-preview/blog/[slug]', './src/keystatic/blog-preview.astro');
-      route('/keystatic-preview/version/[...file]', './src/keystatic/version.ts');
+      // The local version reads file times (Node); the online one asks GitHub for the branch head.
+      route(
+        '/keystatic-preview/version/[...file]',
+        cmsOnline ? './src/keystatic/version-online.ts' : './src/keystatic/version.ts',
+      );
     },
   },
 });
@@ -160,14 +164,18 @@ export default defineConfig({
   // Not in dev: Keystatic's GitHub App setup writes the local .env from Node.
   ...(cmsOnline &&
     !isDev && {
-      adapter: cloudflare({ imageService: 'compile', prerenderEnvironment: 'node' }),
+      adapter: cloudflare({
+        // Static pages are optimized in the build; the live CMS preview serves the originals.
+        imageService: { build: 'compile', runtime: 'passthrough' },
+        prerenderEnvironment: 'node',
+      }),
       session: { driver: sessionDrivers.lruCache() },
     }),
   integrations: [
     react(),
     markdoc(),
     ...(isDev || cmsOnline ? [keystatic()] : []),
-    ...(isDev ? [keystaticPreview()] : []),
+    ...(isDev || cmsOnline ? [keystaticPreview()] : []),
     sitemap({
       i18n: { defaultLocale: 'es', locales: { es: 'es', en: 'en' } },
       filter: (page) => {

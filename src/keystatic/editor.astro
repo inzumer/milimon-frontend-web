@@ -1,8 +1,15 @@
+---
+import { CMS_KEYSTATIC_PATH, CMS_ONLINE, CMS_TITLES } from '@constants/cms';
+
+/** Keystatic next to the live preview; online (staging) it edits the CMS branch. */
+const start = CMS_ONLINE ? CMS_KEYSTATIC_PATH : '/keystatic';
+---
+
 <html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Milimon · Editor</title>
+    <title>{CMS_TITLES.suffix}</title>
     <style>
       body {
         margin: 0;
@@ -23,17 +30,19 @@
     </style>
   </head>
   <body>
-    <iframe id="admin" src="/keystatic" title="Keystatic"></iframe>
-    <iframe id="preview" src="/keystatic-preview/recipes/none" title="Preview"></iframe>
+    <iframe id="admin" src={start} title="Keystatic"></iframe>
+    <iframe id="preview" src="/keystatic-preview/recipes/none" title="Vista previa"></iframe>
     <script>
       const admin = document.querySelector<HTMLIFrameElement>('#admin');
       const preview = document.querySelector<HTMLIFrameElement>('#preview');
       let current = '';
       setInterval(() => {
         const path = admin?.contentWindow?.location.pathname ?? '';
+        // Works with and without a branch in the URL (/keystatic/branch/<b>/collection/…).
         const [, collection = 'recipes', slug = 'none'] =
-          /\/keystatic\/collection\/(recipes|blog)\/item\/([^/]+)/.exec(path) ?? [];
+          /\/collection\/(recipes|blog)\/item\/([^/]+)/.exec(path) ?? [];
         const next = `/keystatic-preview/${collection}/${slug}`;
+
         if (preview && next !== current) {
           current = next;
           preview.src = next;

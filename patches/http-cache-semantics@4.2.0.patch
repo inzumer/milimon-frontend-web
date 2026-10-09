@@ -1,0 +1,36 @@
+diff --git a/index.js b/index.js
+index f01e9a16b4781dc24c8f43dc7a4c8e6d1e4ae5eb..99937040658e40c5be1b23d96d14dac0c7a42da8 100644
+--- a/index.js
++++ b/index.js
+@@ -425,7 +425,8 @@ module.exports = class CachePolicy {
+         if (this.stale()) {
+             // If a value is present, then the client is willing to accept a response that has
+             // exceeded its freshness lifetime by no more than the specified number of seconds
+-            const allowsStaleWithoutRevalidation = 'max-stale' in requestCC &&
++            // Local patch (GHSA-ch52-4w7c-c8xp): max-stale never revives a response zeroed for security.
++            const allowsStaleWithoutRevalidation = !this._zeroedForSecurity() && 'max-stale' in requestCC &&
+                 (true === requestCC['max-stale'] || requestCC['max-stale'] > this.age() - this.maxAge());
+ 
+             if (allowsStaleWithoutRevalidation) {
+@@ -596,6 +597,21 @@ module.exports = class CachePolicy {
+      * Returns the maximum age (freshness lifetime) of the response in seconds.
+      * @returns {number} The max-age value in seconds.
+      */
++    /**
++     * Local patch (GHSA-ch52-4w7c-c8xp): whether maxAge() is 0 on purpose (not storable, no-cache,
++     * a shared response with Set-Cookie, Vary: *, proxy-revalidate), so it must never be served stale.
++     * @returns {boolean}
++     */
++    _zeroedForSecurity() {
++        return (
++            !this.storable() ||
++            Boolean(this._rescc['no-cache']) ||
++            (this._isShared && Boolean(this._resHeaders['set-cookie']) && !this._rescc.public && !this._rescc.immutable) ||
++            this._resHeaders.vary === '*' ||
++            (this._isShared && Boolean(this._rescc['proxy-revalidate']))
++        );
++    }
++
+     maxAge() {
+         if (!this.storable() || this._rescc['no-cache']) {
+             return 0;

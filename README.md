@@ -60,7 +60,9 @@ API), `PUBLIC_API_APP_ID` (`web`), `PUBLIC_GOOGLE_CLIENT_ID` y `NODE_VERSION`.
 
 **CMS en staging.** Con `PUBLIC_KEYSTATIC_STORAGE=github` el build suma el adaptador de Cloudflare:
 Keystatic queda online en `/keystatic` (modo GitHub, sobre la rama `cms/draft`: al guardar, el workflow `cms-to-dev` arma `cms/<entrada>` con un solo commit, valida el build y lo mergea con squash en `dev`), staging muestra también los
-borradores y el resto del sitio sigue estático. Producción no lleva esa variable. El Worker de
+borradores y el resto del sitio sigue estático. El editor (`/keystatic-editor`) pone Keystatic al
+lado de la vista previa en vivo: lee la entrada de `cms/draft` en GitHub con el token de la sesión
+del CMS y se recarga segundos después de cada guardado (en local lee los archivos). Producción no lleva esa variable. El Worker de
 staging necesita además:
 
 | Dónde                            | Variable                           | Qué es                               |
