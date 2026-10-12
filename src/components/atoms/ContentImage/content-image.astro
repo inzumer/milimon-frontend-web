@@ -1,0 +1,20 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageSource } from '@services/content';
+
+interface Props {
+  src: ImageSource;
+  alt: string;
+  width: number;
+  class?: string;
+}
+
+/** A content photo: optimized by Astro in the build, a plain image in the online CMS preview. */
+const { src, alt, width, class: className } = Astro.props;
+---
+
+{typeof src === 'string' ? (
+  <img src={src} alt={alt} width={width} loading="lazy" decoding="async" class={className} />
+) : (
+  <Image src={src} alt={alt} width={width} class={className} />
+)}

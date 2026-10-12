@@ -7,9 +7,11 @@ import { toLocale } from '@utils';
 interface Props {
   collection: 'recipes' | 'blog';
   entry: { data: { draft: boolean } } | undefined;
+  /** Online preview without a GitHub session in the editor. */
+  signedOut?: boolean;
 }
 
-const { collection, entry } = Astro.props;
+const { collection, entry, signedOut = false } = Astro.props;
 const { slug = '' } = Astro.params;
 const lang = toLocale(Astro.url.searchParams.get('lang') ?? 'es');
 const text = getTranslations(lang, 'recipe-page').preview;
@@ -44,8 +46,10 @@ const draft = entry?.data.draft ?? false;
         {text.draft}
       </RichText>
     )}
-    {entry ? <slot /> : <RichText>{text.pick}</RichText>}
+    {entry ? <slot /> : <RichText>{signedOut ? text['signed-out'] : text.pick}</RichText>}
     <script>
+      import { CMS_PREVIEW_POLL_MS } from '@constants/cms';
+
       const url = document.body.dataset.versionUrl ?? '';
       let version = '';
       setInterval(async () => {
@@ -57,7 +61,7 @@ const draft = entry?.data.draft ?? false;
         }
 
         version = next;
-      }, 1500);
+      }, CMS_PREVIEW_POLL_MS);
     </script>
   </body>
 </html>

@@ -113,7 +113,8 @@ Suggested scopes: `formulas`, `calculators`, `ui`, `i18n`, `theme`, `pages`, `de
 - `release/<version>` from `dev` → `main` (tag) and back into `dev`. **Automatic** (Madrid time): `release-prepare.yml` cuts
   the release PR on Fridays at noon, `release-publish.yml` merges it on Mondays at 12:30 and
   `release-finish.yml` tags, publishes the GitHub Release and backports to `dev`; with no
-  changes the release PRs are closed. Dependabot opens PRs on the 1st and 15th.
+  changes the release PRs are closed. Dependencies are updated by hand (no Dependabot); CI fails
+  on any vulnerability.
 - `hotfix/<kebab-name>` from `main` → `main` (tag) and `dev`.
 - Releases so far: v1.0.0 (F0–F10, accounts and history) and v1.1.0 (F9: components moved to
   ui-library). New work keeps going through `feature/*` → `dev` → `release/*`.

@@ -1,13 +1,24 @@
 ---
 import { getEntry } from 'astro:content';
 import BlogPost from '@components/organisms/BlogPost/blog-post.astro';
+import { CMS_ONLINE, CMS_TOKEN_COOKIE } from '@constants/cms';
+import { loadDraftPost, markdocTree, withEditorToken } from '@services/cms-preview';
+import type { BlogEntry } from '@services/content';
 import { toLocale } from '@utils';
 import PreviewLayout from './preview-layout.astro';
 
 const lang = toLocale(Astro.url.searchParams.get('lang') ?? 'es');
-const post = await getEntry('blog', Astro.params.slug ?? '');
+const slug = Astro.params.slug ?? '';
+// Online (staging) the draft comes from the CMS branch on GitHub; locally, from the files.
+const draft = CMS_ONLINE
+  ? await withEditorToken(Astro.cookies.get(CMS_TOKEN_COOKIE)?.value, (token) =>
+      loadDraftPost(slug, lang, token),
+    )
+  : null;
+const post: BlogEntry | null | undefined = draft ? draft.value : await getEntry('blog', slug);
+const body = draft?.value ? markdocTree(draft.value.body, draft.value.resolveImage) : undefined;
 ---
 
-<PreviewLayout collection="blog" entry={post}>
-  {post && <BlogPost post={post} lang={lang} />}
+<PreviewLayout collection="blog" entry={post ?? undefined} signedOut={draft?.signedOut ?? false}>
+  {post && <BlogPost post={post} lang={lang} {...(body && { body })} />}
 </PreviewLayout>

@@ -22,7 +22,7 @@
         "directory": "./dist",
         "not_found_handling": "404-page",
         "html_handling": "auto-trailing-slash",
-        "run_worker_first": ["/keystatic*", "/api/keystatic/*"],
+        "run_worker_first": ["/keystatic*", "/api/keystatic/*", "/_image"],
       },
     },
   },

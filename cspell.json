@@ -29,7 +29,10 @@
     "jsdom",
     "lcov",
     "tsconfigs",
-    "kebab"
+    "kebab",
+    "markdoc",
+    "Markdoc",
+    "Renderable"
   ],
   "dictionaryDefinitions": [
     {

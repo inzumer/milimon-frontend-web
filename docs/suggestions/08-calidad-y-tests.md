@@ -91,7 +91,7 @@ sirven para los demás proyectos (Zamuner, Inzumer, los paquetes `inzumer-*`).
 - Todo se puede lanzar a mano desde **Actions** (prepare permite elegir el tipo de versión).
 - GitHub solo acepta horarios en UTC: cada workflow tiene dos horarios (verano e invierno) y corre el
   que cae al mediodía en Madrid.
-- **Dependabot**: los días 1 y 15 de cada mes a las 9:00 (Madrid), no cada semana.
+- **Dependencias**: a mano, sin Dependabot (desde el 07/10), para no tener PRs automáticos abiertos.
 
 **Configuración de cada repo** (una sola vez, en GitHub; ya hecha en `milimon` y `api-milimon` el 2026-09-28):
 

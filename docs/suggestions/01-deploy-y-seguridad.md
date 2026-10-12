@@ -57,7 +57,7 @@ Cross-Origin-Opener-Policy: same-origin-allow-popups   (necesario para los popup
 - [ ] OWASP ZAP (baseline scan) contra el sitio y la API.
 - [ ] Tokens: hoy viven en `localStorage`; evaluar pasar el refresh token a cookie `HttpOnly`,
       `Secure`, `SameSite=Strict` en el dominio propio (reduce el impacto de un XSS).
-- [ ] Dependencias: `pnpm audit` en CI y Dependabot/Renovate con merge semanal.
+- [x] Dependencias: `pnpm audit` en CI (falla ante cualquier vulnerabilidad); se actualizan a mano, sin Dependabot.
 
 **API**
 
